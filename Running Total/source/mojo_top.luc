@@ -1,0 +1,59 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8]     // DIP switches on IO Shield
+  ) {
+  
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    
+    pipeline switch_cond[3][8] (#DEPTH(2)); // create a 3x8 array of pipelines with a depth of 2
+    button_conditioner btn_cond;
+    edge_detector edge (#RISE(1), #FALL(0));
+    
+    .rst(rst) {
+      dff running_total[24]; // Running total, 24 bits wide
+    }
+  }
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    led = 8h00;             // turn LEDs off
+    spi_miso = bz;          // not using SPI
+    spi_channel = bzzzz;    // not using flags
+    avr_rx = bz;            // not using serial port
+    
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
+    switch_cond.in = io_dip; // connect the raw switch input to the conditioner
+    
+    btn_cond.in = io_button[4]; // io_button[4] is the "right" button
+    edge.in = btn_cond.out;     // connect the button to the edge detector
+    
+    if (edge.out) // only add when the button is pressed
+      running_total.d = running_total.q + switch_cond.out[0]; // use the conditioned switch input
+    
+    io_led = {running_total.q[16+:8], running_total.q[8+:8], running_total.q[0+:8]};
+  }
+}

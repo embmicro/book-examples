@@ -1,0 +1,98 @@
+global Inst {
+  const NOP   = 4d0;  // 0 filled
+  const LOAD  = 4d1;  // dest, op1, offset  : R[dest] = M[R[op1] + offset]
+  const STORE = 4d2;  // src, op1, offset   : M[R[op1] + offset] = R[src]
+  const SET   = 4d3;  // dest, const        : R[dest] = const
+  const LT    = 4d4;  // dest, op1, op2     : R[dest] = R[op1] < R[op2]
+  const EQ    = 4d5;  // dest, op1, op2     : R[dest] = R[op1] == R[op2]
+  const BEQ   = 4d6;  // op1, const         : R[0] = R[0] + (R[op1] == const ? 2 : 1)
+  const BNEQ  = 4d7;  // op1, const         : R[0] = R[0] + (R[op1] != const ? 2 : 1)
+  const ADD   = 4d8;  // dest, op1, op2     : R[dest] = R[op1] + R[op2]
+  const SUB   = 4d9;  // dest, op1, op2     : R[dest] = R[op1] - R[op2]
+  const SHL   = 4d10; // dest, op1, op2     : R[dest] = R[op1] << R[op2]
+  const SHR   = 4d11; // dest, op1, op2     : R[dest] = R[op1] >> R[op2]
+  const AND   = 4d12; // dest, op1, op2     : R[dest] = R[op1] & R[op2]
+  const OR    = 4d13; // dest, op1, op2     : R[dest] = R[op1] | R[op2]
+  const INV   = 4d14; // dest, op1          : R[dest] = ~R[op1]
+  const XOR   = 4d15; // dest, op1, op2     : R[dest] = R[op1] ^ R[op2]
+}
+
+module cpu (
+    input clk,         // clock
+    input rst,         // reset
+    output write,      // CPU write request
+    output read,       // CPU read request
+    output address[8], // read/write address
+    output dout[8],    // write data
+    input din[8]       // read data
+  ) {
+  
+  .clk(clk), .rst(rst) {
+    dff reg[16][8]; // CPU Registers
+  }
+  
+  instRom instRom;  // program ROM
+  
+  sig op[4];        // opcode
+  sig arg1[4];      // first arg
+  sig arg2[4];      // second arg
+  sig dest[4];      // destination arg
+  sig constant[8];  // constant arg
+  
+  always {
+    // defaults
+    write = 0;      // don't write
+    read = 0;       // don't read
+    address = 8hxx; // don't care
+    dout = 8hxx;    // don't care
+    
+    instRom.address = reg.q[0];   // reg 0 is program counter
+    reg.d[0] = reg.q[0] + 1;      // increment PC by default
+    
+    op = instRom.inst[15:12];     // opcode is top 4 bits
+    dest = instRom.inst[11:8];    // dest is next 4 bits
+    arg1 = instRom.inst[7:4];     // arg1 is next 4 bits
+    arg2 = instRom.inst[3:0];     // arg2 is last 4 bits
+    constant = instRom.inst[7:0]; // constant is last 8 bits
+    
+    // Perform the operation
+    case (op) {
+      Inst.LOAD:
+        read = 1;                                  // request a read
+        reg.d[dest] = din;                         // save the data
+        address = reg.q[arg1] + arg2;              // set the address
+      Inst.STORE:
+        write = 1;                                 // request a write
+        dout = reg.q[dest];                        // output the data
+        address = reg.q[arg1] + arg2;              // set the address
+      Inst.SET:
+        reg.d[dest] = constant;                    // set the reg to constant
+      Inst.LT:
+        reg.d[dest] = reg.q[arg1] < reg.q[arg2];   // less-than comparison
+      Inst.EQ:
+        reg.d[dest] = reg.q[arg1] == reg.q[arg2];  // equals comparison
+      Inst.BEQ:
+        if (reg.q[dest] == constant)               // if R[dest] == constant
+          reg.d[0] = reg.q[0] + 2;                 // skip next instruction
+      Inst.BNEQ:
+        if (reg.q[dest] != constant)               // if R[dest] != constant
+          reg.d[0] = reg.q[0] + 2;                 // skip next instruction
+      Inst.ADD:
+        reg.d[dest] = reg.q[arg1] + reg.q[arg2];   // addition
+      Inst.SUB:
+        reg.d[dest] = reg.q[arg1] - reg.q[arg2];   // subtraction
+      Inst.SHL:
+        reg.d[dest] = reg.q[arg1] << reg.q[arg2];  // shift left 
+      Inst.SHR:
+        reg.d[dest] = reg.q[arg1] >> reg.q[arg2];  // shift right
+      Inst.AND:
+        reg.d[dest] = reg.q[arg1] & reg.q[arg2];   // bit-wise AND
+      Inst.OR:
+        reg.d[dest] = reg.q[arg1] | reg.q[arg2];   // bit-wise OR
+      Inst.INV:
+        reg.d[dest] = ~reg.q[arg1];                // bit-wise invert
+      Inst.XOR:
+        reg.d[dest] = reg.q[arg1] ^ reg.q[arg2];   // bit-wise XOR
+    }
+  }
+}

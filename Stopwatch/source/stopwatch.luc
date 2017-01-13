@@ -1,0 +1,44 @@
+module stopwatch (
+    input clk,        // clock
+    input rst,        // reset
+    input start_stop, // start/stop signal
+    output value[14]  // counter value
+  ) {
+  
+  .clk(clk){
+    .rst(rst){
+      fsm state = {IDLE, RUNNING, PAUSED};
+    }
+    dff tenth_ctr[23]; // need to store up to 4,999,999
+    dff ctr[14];       // need to store up to 9999
+  }
+  
+  always {
+    value = ctr.q;                       // output counter
+    
+    case (state.q) {                     // FSM case statement
+      state.IDLE:                        // IDLE: not counting
+        tenth_ctr.d = 0;                 // reset tenths counter
+        ctr.d = 0;                       // reset main counter
+        if (start_stop)                  // if start_stop pressed
+          state.d = state.RUNNING;       // switch to RUNNING state
+      
+      state.RUNNING:                     // RUNNING: increment counters
+        tenth_ctr.d = tenth_ctr.q + 1;   // increment tenths counter
+        
+        if (tenth_ctr.q == 4999999) {    // if max value
+          tenth_ctr.d = 0;               // reset to 0
+          ctr.d = ctr.q + 1;             // increment main counter
+          if (ctr.q == 9999)             // if max value
+            ctr.d = 0;                   // reset to 0
+        }
+        
+        if (start_stop)                  // if start_stop pressed
+          state.d = state.PAUSED;        // switch to PAUSED state
+      
+      state.PAUSED:                      // PAUSED: maintain count but do nothing
+        if (start_stop)                  // if start_stop pressed
+          state.d = state.RUNNING;       // switch back to RUNNING
+    }
+  }
+}

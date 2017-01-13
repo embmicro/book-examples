@@ -1,0 +1,38 @@
+module instRom (
+    input address[8],
+    output inst[16]
+  ) {
+
+  always {
+    inst = c{Inst.NOP, 12b0};
+
+    case (address) {
+      // begin:
+      0: inst = c{Inst.SET, 4d2, 8d0};              // SET R2, 0
+      // loop:
+      1: inst = c{Inst.SET, 4d1, 8d128};            // SET R1, 128
+      2: inst = c{Inst.STORE, 4d2, 4d1, 4d0};       // STORE R2, R1, 0
+      3: inst = c{Inst.SET, 4d1, 8d1};              // SET R1, 1
+      4: inst = c{Inst.ADD, 4d2, 4d2, 4d1};         // ADD R2, R2, R1
+      5: inst = c{Inst.SET, 4d15, 8d1};             // SET R15, loop
+      6: inst = c{Inst.SET, 4d0, 8d7};              // SET R0, delay
+      // delay:
+      7: inst = c{Inst.SET, 4d11, 8d0};             // SET R11, 0
+      8: inst = c{Inst.SET, 4d12, 8d0};             // SET R12, 0
+      9: inst = c{Inst.SET, 4d13, 8d0};             // SET R13, 0
+      10: inst = c{Inst.SET, 4d1, 8d1};             // SET R1, 1
+      // delay_loop:
+      11: inst = c{Inst.ADD, 4d11, 4d11, 4d1};      // ADD R11, R11, R1
+      12: inst = c{Inst.BEQ, 4d11, 8d0};            // BEQ R11, 0
+      13: inst = c{Inst.SET, 4d0, 8d11};            // SET R0, delay_loop
+      14: inst = c{Inst.ADD, 4d12, 4d12, 4d1};      // ADD R12, R12, R1
+      15: inst = c{Inst.BEQ, 4d12, 8d0};            // BEQ R12, 0
+      16: inst = c{Inst.SET, 4d0, 8d11};            // SET R0, delay_loop
+      17: inst = c{Inst.ADD, 4d13, 4d13, 4d1};      // ADD R13, R13, R1
+      18: inst = c{Inst.BEQ, 4d13, 8d0};            // BEQ R13, 0
+      19: inst = c{Inst.SET, 4d0, 8d11};            // SET R0, delay_loop
+      20: inst = c{Inst.SET, 4d1, 8d0};             // SET R1, 0
+      21: inst = c{Inst.ADD, 4d0, 4d15, 4d1};       // ADD R0, R15, R1
+    }
+  }
+}

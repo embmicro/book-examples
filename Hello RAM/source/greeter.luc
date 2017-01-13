@@ -1,0 +1,102 @@
+module greeter (
+    input clk,         // clock
+    input rst,         // reset
+    input new_rx,      // new RX flag
+    input rx_data[8],  // RX data
+    output new_tx,     // new TX flag
+    output tx_data[8], // TX data
+    input tx_busy      // TX is busy flag
+  ) {
+  
+  const HELLO_TEXT = $reverse("\r\nHello @!\r\n"); // reverse so index 0 is the left most letter
+  const PROMPT_TEXT = $reverse("Please type your name: ");
+  
+  .clk(clk) {
+    .rst(rst) {
+      fsm state = {IDLE, PROMPT, LISTEN, HELLO}; // our state machine
+    }
+    
+    // we need our counters to be large enough to store all the indices of our text
+    dff hello_count[$clog2(HELLO_TEXT.WIDTH[0])]; // HELLO_TEXT is 2D so WIDTH[0] gets the first dimension
+    dff prompt_count[$clog2(PROMPT_TEXT.WIDTH[0])];
+    
+    dff name_count[5]; // 5 allows for 2^5 = 32 letters
+    // we need our RAM to have an entry for every value of name_count
+    simple_ram ram (#SIZE(8), #DEPTH($pow(2,name_count.WIDTH)));
+  }
+  
+  
+  always {
+    ram.address = name_count.q; // use name_count as the address
+    ram.write_data = 8hxx;      // don't care
+    ram.write_en = 0;           // read by default
+    
+    new_tx = 0;                 // default to no new data
+    tx_data = 8hxx;             // don't care
+    
+    case (state.q) { // our FSM
+      // IDLE: Reset everything and wait for a new byte.
+      state.IDLE:
+        hello_count.d = 0;
+        prompt_count.d = 0;
+        name_count.d = 0;
+        if (new_rx) // wait for any letter
+          state.d = state.PROMPT;
+      
+      // PROMPT: Print out name prompt.
+      state.PROMPT:
+        if (!tx_busy) {
+          prompt_count.d = prompt_count.q + 1;   // move to the next letter
+          new_tx = 1;                            // send data
+          tx_data = PROMPT_TEXT[prompt_count.q]; // send letter from PROMPT_TEXT
+          if (prompt_count.q == PROMPT_TEXT.WIDTH[0] - 1) // no more letters
+            state.d = state.LISTEN;              // change states
+        }
+      
+      // LISTEN: Listen to the user as they type his/her name.
+      state.LISTEN:
+        if (new_rx) { // wait for a new byte
+          ram.write_data = rx_data;        // write the received letter to RAM
+          ram.write_en = 1;                // signal we want to write
+          name_count.d = name_count.q + 1; // increment the address
+          
+          // We aren't checking tx_busy here that means if someone types super
+          // fast we could drop bytes. In practice this doesn't happen.
+          new_tx = rx_data != "\n" && rx_data != "\r"; // only echo non-new line characters
+          tx_data = rx_data; // echo text back so you can see what you type
+          
+          // if we run out of space or they pressed enter
+          if (&name_count.q || rx_data == "\n" || rx_data == "\r") {
+            state.d = state.HELLO;
+            name_count.d = 0; // reset name_count
+          }
+        }
+      
+      // HELLO: Prints the hello text with the given name inserted
+      state.HELLO:
+        if (!tx_busy) { // wait for tx to not be busy
+          if (HELLO_TEXT[hello_count.q] != "@") { // if we are not at the sentry
+            hello_count.d = hello_count.q + 1;    // increment to next letter
+            new_tx = 1;                           // new data to send
+            tx_data = HELLO_TEXT[hello_count.q];  // send the letter
+          } else {                                // we are at the sentry
+            name_count.d = name_count.q + 1;      // increment the name_count letter
+            
+            if (ram.read_data != "\n" && ram.read_data != "\r") // if we are not at the end
+              new_tx = 1;                                       // send data
+            
+            tx_data = ram.read_data;              // send the letter from the RAM
+            
+            // if we are at the end of the name or out of letters to send
+            if (ram.read_data == "\n" || ram.read_data == "\r" || &name_count.q) {
+              hello_count.d = hello_count.q + 1;  // increment hello_count to pass the sentry
+            }
+          }
+          
+          // if we have sent all of HELLO_TEXT
+          if (hello_count.q == HELLO_TEXT.WIDTH[0] - 1)
+            state.d = state.IDLE; // return to IDLE
+        }
+    }
+  }
+}

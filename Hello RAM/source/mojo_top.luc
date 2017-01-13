@@ -1,0 +1,47 @@
+module mojo_top(
+		input clk,              // 50MHz clock
+		input rst_n,            // reset button (active low)
+		output led [8],         // 8 user controllable LEDs
+		input cclk,             // configuration clock, AVR ready when high
+		output spi_miso,        // AVR SPI MISO
+		input spi_ss,           // AVR SPI Slave Select
+		input spi_mosi,         // AVR SPI MOSI
+		input spi_sck,          // AVR SPI Clock
+		output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+		input avr_tx,           // AVR TX (FPGA RX)
+		output avr_rx,          // AVR RX (FPGA TX)
+		input avr_rx_busy       // AVR RX buffer full
+	) {
+	
+	.clk(clk), .rst(~rst_n){
+		// the avr_interface module is used to talk to the AVR for access to the USB port and analog pins
+		avr_interface avr;
+		
+		greeter greeter; // instance of our greeter
+	}
+	
+	always {
+    // connect inputs of avr
+    avr.cclk = cclk;
+    avr.spi_ss = spi_ss;
+    avr.spi_mosi = spi_mosi;
+    avr.spi_sck = spi_sck;
+    avr.rx = avr_tx;
+    
+		// connect outputs of avr
+		spi_miso = avr.spi_miso;
+		spi_channel = avr.spi_channel;
+		avr_rx = avr.tx;
+		
+		avr.channel = hf; // ADC is unused so disable
+		avr.tx_block = avr_rx_busy; // block TX when AVR is busy
+		
+		greeter.new_rx = avr.new_rx_data;
+		greeter.rx_data = avr.rx_data;
+		avr.new_tx_data = greeter.new_tx;
+		avr.tx_data = greeter.tx_data;
+		greeter.tx_busy = avr.tx_busy;
+		
+		led = 8h00;             // turn LEDs off
+	}
+}
