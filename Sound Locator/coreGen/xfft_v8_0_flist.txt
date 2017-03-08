@@ -1,0 +1,18 @@
+# Output products list for <xfft_v8_0>
+demo_tb/tb_xfft_v8_0.vhd
+xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_lin.zip
+xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_lin64.zip
+xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_nt.zip
+xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_nt64.zip
+xfft_v8_0/doc/ds808_xfft.pdf
+xfft_v8_0/doc/xfft_v8_0_readme.txt
+xfft_v8_0/doc/xfft_v8_0_vinfo.html
+xfft_v8_0.asy
+xfft_v8_0.gise
+xfft_v8_0.ngc
+xfft_v8_0.v
+xfft_v8_0.veo
+xfft_v8_0.xco
+xfft_v8_0.xise
+xfft_v8_0_flist.txt
+xfft_v8_0_xmdf.tcl

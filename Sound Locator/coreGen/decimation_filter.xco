@@ -1,0 +1,75 @@
+##############################################################
+#
+# Xilinx Core Generator version 14.7
+# Date: Mon Mar  6 17:20:05 2017
+#
+##############################################################
+#
+#  This file contains the customisation parameters for a
+#  Xilinx CORE Generator IP GUI. It is strongly recommended
+#  that you do not manually alter this file as it may cause
+#  unexpected and unsupported behavior.
+#
+##############################################################
+#
+#  Generated from component: xilinx.com:ip:cic_compiler:3.0
+#
+##############################################################
+#
+# BEGIN Project Options
+SET addpads = false
+SET asysymbol = true
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = Verilog
+SET device = xc6slx9
+SET devicefamily = spartan6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = tqg144
+SET removerpms = false
+SET simulationfiles = Behavioral
+SET speedgrade = -2
+SET verilogsim = true
+SET vhdlsim = false
+# END Project Options
+# BEGIN Select
+SELECT CIC_Compiler xilinx.com:ip:cic_compiler:3.0
+# END Select
+# BEGIN Parameters
+CSET clock_frequency=50
+CSET component_name=decimation_filter
+CSET differential_delay=1
+CSET filter_type=Decimation
+CSET fixed_or_initial_rate=50
+CSET gui_behaviour=Coregen
+CSET hardwareoversamplingrate=1
+CSET has_aclken=false
+CSET has_aresetn=false
+CSET has_dout_tready=false
+CSET input_data_width=2
+CSET input_sample_frequency=2.5
+CSET maximum_rate=50
+CSET minimum_rate=50
+CSET number_of_channels=1
+CSET number_of_stages=4
+CSET output_data_width=20
+CSET passband_max=0.2
+CSET passband_min=0.0
+CSET quantization=Truncation
+CSET ratespecification=Frequency_Specification
+CSET response_magnitude=Normalized
+CSET sample_rate_changes=Fixed
+CSET sampleperiod=1
+CSET stopband_max=1.0
+CSET stopband_min=0.2
+CSET use_streaming_interface=true
+CSET use_xtreme_dsp_slice=false
+# END Parameters
+# BEGIN Extra information
+MISC pkg_timestamp=2013-07-22T10:45:03Z
+# END Extra information
+GENERATE
+# CRC: 9168bf95

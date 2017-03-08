@@ -1,0 +1,8 @@
+NET "mic_clk" LOC = P33 | IOSTANDARD = LVTTL;
+NET "mic_data<0>" LOC = P50 | IOSTANDARD = LVTTL;
+NET "mic_data<2>" LOC = P32 | IOSTANDARD = LVTTL;
+NET "mic_data<4>" LOC = P41 | IOSTANDARD = LVTTL;
+NET "mic_data<6>" LOC = P40 | IOSTANDARD = LVTTL;
+NET "mic_data<1>" LOC = P34 | IOSTANDARD = LVTTL;
+NET "mic_data<3>" LOC = P35 | IOSTANDARD = LVTTL;
+NET "mic_data<5>" LOC = P51 | IOSTANDARD = LVTTL;

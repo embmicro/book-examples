@@ -1,0 +1,382 @@
+module sound_locator (
+    input clk,              // clock
+    input rst,              // reset
+    input new_sample_in,    // new sample flag
+    input sample_in[7][16], // sample from the microphones
+    input start,            // start a cycle
+    output busy,            // busy flag
+    output result[16][16],  // output of location detection
+    output result_valid     // output valid flag
+  ) {
+  
+  const SAMPLES = 512;      // number of microphones samples to use
+  const CROP_MIN = 9;       // crop window min for frequencies
+  const CROP_MAX = 199;     // crop window max for frequencies
+  
+  /* Section angle bounds 3.13 fixed point
+     0: 24127 -24127
+     1: 20910 24127
+     2: 17693 20910
+     3: 14476 17693
+     4: 11259 14476
+     5: 8042  11259
+     6: 4825  8042
+     7: 1608  4825
+     8: -1608 1608
+     9: -4825 -1608
+     10: -8042 -4825
+     11: -11259 -8042
+     12: -14476 -11259
+     13: -17693 -14476
+     14: -20910 -17693
+     15: -24127 -20910
+  */
+  //const ANGLE_BOUNDS = {16d24127, 16d20910, 16d17693, 16d14476, 16d11259, 16d8042, 16d4825, 16d1608};
+  
+  // angle bounds in 3.5 fixed point (to save space on the comparisons)
+  const ANGLE_BOUNDS = {8d94, 8d82, 8d69, 8d57, 8d44, 8d31, 8d19, 8d6};
+  
+  .clk(clk) {
+    .rst(rst) {
+      // FSM state holder
+      fsm state = { INIT, IDLE, CAPTURE, SAMPLE_READ, FFT_FEED, FFT_UNLOAD, DIFFERENCE, AGGRIGATE_WAIT, AGGRIGATE, OUTPUT };
+      dff addr [$clog2(SAMPLES)];       // address for the RAM
+      dff ch_ctr [3];                   // channel counter (0-6)
+    }
+    
+    hann_rom hann;                      // Hann function ROM
+    dff sums [16][24];                  // running total sums
+    signed dff scaled_phase[6][2][17];  // scaled phase vector values
+    dff addr_pipe [2][addr.WIDTH];      // pipe to keep the addr in sync
+    dff mag_phase_ready[2];             // previous ready flags
+  }
+  
+  // FIFO for holding addr values while CORDIC processes data
+  async_fifo fifo (#SIZE(addr.WIDTH + 1), #DEPTH(64), .wclk(clk), .rclk(clk), .wrst(rst), .rrst(rst));
+  
+  .aclk(clk) { // Xilinx coregen parts use the aclk port name for the clock
+    xfft_v8_0 xfft (.aresetn(~rst)); // FFT calculator
+    mag_phase_calculator mag_phase;  // CORDIC for converting Cartesian (X-Y) to polar (magnitude-phase) forms
+  }
+  
+  // multi-purpose RAM used in multiple stages
+  simple_dual_ram ram [7][2] (#SIZE(16), #DEPTH(SAMPLES/2), .wclk(clk), .rclk(clk));
+  
+  var i;
+  signed sig mult_temp[34];        // temp multiplication value
+  signed sig hann_sample[16];      // sample passed through Hann window
+  signed sig temp_phase[6][17];    // temp phase value when calculating differences
+  
+  signed sig summed_phase[2][19];  // summed scaled phase values
+  signed sig angle[8];             // 8-bit value of the angle used in binning
+  sig magnitude[16];               // magnitude of the sample
+  sig sum[24];                     // sum value used for overflow check
+  
+  always{
+    // set default values
+    busy = state.q != state.IDLE;
+    result = 16x{{16bx}};
+    result_valid = 0;
+    
+    hann.addr = addr.q;
+    
+    xfft.s_axis_config_tdata = 24bx;
+    xfft.s_axis_config_tvalid = 0;
+    
+    xfft.s_axis_data_tdata = 32bx;
+    xfft.s_axis_data_tvalid = 0;
+    xfft.s_axis_data_tlast = 0;
+    
+    xfft.m_axis_data_tready = 0;
+    
+    ram.waddr = 7x{{2x{{addr.q[addr.WIDTH-2:0]}}}};
+    ram.write_en = 7x{{2x{1b0}}};
+    ram.write_data = 7x{{2x{{16bx}}}};
+    ram.raddr = 7x{{2x{{addr.q[addr.WIDTH-2:0]}}}};
+    
+    mag_phase.s_axis_cartesian_tdata = 32bx;
+    mag_phase.s_axis_cartesian_tvalid = 0;
+    
+    // save the last two ready states
+    mag_phase_ready.d = c{mag_phase_ready.q[0], mag_phase.s_axis_cartesian_tready};
+    
+    fifo.din = bx;
+    fifo.wput = 0;
+    fifo.rget = 0;
+    
+    case (state.q) {
+      state.INIT:
+        // initialize FFT rounding scheme
+        if (xfft.s_axis_config_tready) {
+          xfft.s_axis_config_tdata = c{2b00, 2b00, 2b01, 2b01, 2b01, 2b01, 2b00, 2b00, 2b00, 1b1};
+          xfft.s_axis_config_tvalid = 1;
+          state.d = state.IDLE;
+        }
+      
+      state.IDLE:
+        addr.d = 0;
+        ch_ctr.d = 0;
+        if (start)
+          state.d = state.CAPTURE;
+      
+      state.CAPTURE:
+        // set each channel's write address to addr.q (minus the LSB)
+        ram.waddr = 7x{{2x{{addr.q[addr.WIDTH-1:1]}}}};
+        
+        if (new_sample_in) {
+          // write each sample to RAM
+          for (i = 0; i < 7; i++) {
+            ram.write_data[i] = 2x{{sample_in[i]}};
+            // write alternating samples to the upper and lower channels
+            ram.write_en[i][addr.q[0]] = 1;
+          }
+          
+          addr.d = addr.q + 1;
+          if (addr.q == SAMPLES - 1) { // if all samples captured move on to next stage
+            addr.d = 0;
+            state.d = state.SAMPLE_READ;
+          }
+        }
+      state.SAMPLE_READ:
+        // wait a cycle to read the data from RAM
+        state.d = state.FFT_FEED;
+        ram.raddr = 7x{{2x{{addr.q[addr.WIDTH-1:1]}}}};
+      
+      state.FFT_FEED:
+        // read from addr.q minus LSB
+        ram.raddr = 7x{{2x{{addr.q[addr.WIDTH-1:1]}}}};
+        
+        // if the FFT is ready to accept data
+        if (xfft.s_axis_data_tready) {
+          // multiply each sample by the HANN window
+          mult_temp = $signed(ram.read_data[ch_ctr.q][addr.q[0]]) * $signed(c{1b0,hann.value});
+          hann_sample = mult_temp[15+:16];
+          xfft.s_axis_data_tdata = c{16b0, hann_sample}; // imaginary part of FFT is 0
+          xfft.s_axis_data_tvalid = 1;
+          addr.d = addr.q + 1;
+          state.d = state.SAMPLE_READ;
+          
+          if (addr.q == SAMPLES - 1) { // if we've read all the samples
+            xfft.s_axis_data_tlast = 1;
+            addr.d = 0;
+            state.d = state.FFT_UNLOAD; // move to next stage
+          }
+        }
+      state.FFT_UNLOAD:
+        /*
+           In this step we unload the FFT and pass the data through the mag_phase calculator 
+           to convert the Cartesian FFT data into polar coordinates. We will use the 
+           phase of each frequency to determine the delay and the magnitude to determine
+           how much weight we should give that frequency.
+           
+           Since the FFT input only had real values, the output will be symmetrical. This 
+           means we only need to process the first half of data.
+        */
+        xfft.m_axis_data_tready = mag_phase.s_axis_cartesian_tready;
+        mag_phase.s_axis_cartesian_tdata = xfft.m_axis_data_tdata;
+        mag_phase.s_axis_cartesian_tvalid = xfft.m_axis_data_tvalid;
+        
+        // pass the address info through a fifo so it is available when the mag_phase data has been processed
+        fifo.din = c{xfft.m_axis_data_tlast, xfft.m_axis_data_tuser[addr.WIDTH-1:0]};
+        fifo.wput = xfft.m_axis_data_tvalid & mag_phase.s_axis_cartesian_tready;
+        
+        // read the fifo data whenever the mag_phase output is valid
+        fifo.rget = mag_phase.m_axis_dout_tvalid;
+        ram.waddr = 7x{{2x{{fifo.dout[addr.WIDTH-2:0]}}}}; // recover the address from the fifo
+        ram.write_en[ch_ctr.q] = 2x{mag_phase.m_axis_dout_tvalid & ~fifo.dout[addr.WIDTH-1]}; // write only first half of values
+        ram.write_data[ch_ctr.q] = {mag_phase.m_axis_dout_tdata[31:16], mag_phase.m_axis_dout_tdata[15:0]}; // phase, mag
+        
+        // if we have processed all the samples we need to
+        if (mag_phase.m_axis_dout_tvalid && fifo.dout[fifo.dout.WIDTH-1]) {
+          ch_ctr.d = ch_ctr.q + 1;                 // move onto the next channel
+          state.d = state.SAMPLE_READ;
+          if (ch_ctr.q == 6) {                     // if we have processed all 7 channels
+            state.d = state.DIFFERENCE;            // move to the next stage
+            addr_pipe.d = 2x{{addr.WIDTHx{1b0}}};
+            addr.d = 0;
+          }
+        }
+      
+      state.DIFFERENCE:
+        for (i = 0; i < 6; i++) {
+          // we care about the difference in phase between the center microphone and the outer microphones
+          // as this is proportional to the delay of the sound (divided by the frequency)
+          temp_phase[i] = $signed(ram.read_data[i][1]) - $signed(ram.read_data[6][1]);
+          
+          // we need to keep the difference in the +/- pi range for the next steps
+          if ($signed(temp_phase[i]) > $signed(16d25736)) { // 25736 = pi (4.13 fixed point)
+            temp_phase[i] = $signed(temp_phase[i]) - $signed(17d51472); // 51472 = 2*pi (4.13 fixed point)
+          } else if ($signed(temp_phase[i]) < $signed(-16d25736)) {
+            temp_phase[i] = $signed(temp_phase[i]) + $signed(17d51472);
+          }
+        }
+        
+        /* Sample coordinates
+           
+           0: (-1,    0)
+           1: (-1/2,  sqrt(3)/2)
+           2: ( 1/2,  sqrt(3)/2)
+           3: ( 1     0)
+           4: ( 1/2, -sqrt(3)/2)
+           5: (-1/2, -sqrt(3)/2)
+           6: ( 0,    0)
+        */
+        
+        addr_pipe.d[0] = addr.q; // output address of the ram
+        
+        if (mag_phase.s_axis_cartesian_tready) {
+          /* 
+             Here we are scaling each microphone's location vector by 
+             the delay (phase difference). This will give us a vector
+             proportional to that microphone's contribution to the total
+             direction.
+          */
+          scaled_phase.d[0][0] = -temp_phase[0];
+          scaled_phase.d[0][1] = 0;
+          
+          mult_temp = -temp_phase[1];
+          scaled_phase.d[1][0] = c{mult_temp[16],mult_temp[16:1]};
+          
+          mult_temp = $signed(temp_phase[1]) * $signed(17d56756);
+          scaled_phase.d[1][1] = mult_temp[mult_temp.WIDTH-2:16]; // phase * sqrt(3)/2
+          
+          scaled_phase.d[2][0] = c{temp_phase[2][16], temp_phase[2][16:1]};
+          
+          mult_temp = $signed(temp_phase[2]) * $signed(17d56756);
+          scaled_phase.d[2][1] = mult_temp[mult_temp.WIDTH-2:16];
+          
+          scaled_phase.d[3][0] = temp_phase[3];
+          scaled_phase.d[3][1] = 0;
+          
+          scaled_phase.d[4][0] = c{temp_phase[4][16], temp_phase[4][16:1]};
+          
+          mult_temp = $signed(temp_phase[4]) * $signed(-17d56756);
+          scaled_phase.d[4][1] = mult_temp[mult_temp.WIDTH-2:16];
+          
+          mult_temp = -temp_phase[5];
+          scaled_phase.d[5][0] = c{mult_temp[16], mult_temp[16:1]};
+          
+          mult_temp = $signed(temp_phase[5]) * $signed(-17d56756);
+          scaled_phase.d[5][1] = mult_temp[mult_temp.WIDTH-2:16];
+          
+          addr_pipe.d[1] = addr_pipe.q[0]; // address of scaled vector values
+          
+          /*
+             With all the scaled vectors, we simply need to sum them to get
+             the overall direction of sound for this frequency.
+          */
+          summed_phase[0] = 0;
+          summed_phase[1] = 0;
+          for (i = 0; i < 6; i++) {
+            summed_phase[0] = $signed(scaled_phase.q[i][0]) + $signed(summed_phase[0]);
+            summed_phase[1] = $signed(scaled_phase.q[i][1]) + $signed(summed_phase[1]);
+          }
+          
+          // if there are more samples to go, advance the addr
+          if (addr.q != SAMPLES/2)
+            addr.d = addr.q + 1;
+          
+          // use the summed vectors (divided by 8) to calculate the overall direction of sound
+          mag_phase.s_axis_cartesian_tdata = c{summed_phase[1][3+:16], summed_phase[0][3+:16]};
+          // only valid for the first half of addr (fft is symmetrical)
+          mag_phase.s_axis_cartesian_tvalid = ~addr_pipe.q[1][addr.WIDTH-1];
+          
+          // feed the addr into a fifo so it is available when the phase calculations are done
+          fifo.din = c{1b0, addr_pipe.q[1]};
+          fifo.wput = ~addr_pipe.q[1][addr.WIDTH-1];
+          if (addr_pipe.q[1] == SAMPLES/2 - 1)
+            fifo.din[fifo.dout.WIDTH-1] = 1; // done flag
+          
+        } else if (&mag_phase_ready.q) {
+          // if we were ready but now aren't we need to go back an address so that we don't skip one
+          addr.d = addr_pipe.q[0];
+        }
+        
+        // read the fifo when the output from the phase calculator is valid
+        fifo.rget = mag_phase.m_axis_dout_tvalid;
+        
+        // write the phase data into the RAM channel 0
+        ram.waddr = 7x{{2x{{fifo.dout[addr.WIDTH-2:0]}}}};
+        ram.write_data[0] = {mag_phase.m_axis_dout_tdata[31:16], mag_phase.m_axis_dout_tdata[15:0]};
+        ram.write_en[0] = 2x{mag_phase.m_axis_dout_tvalid};
+        
+        // if we are on the last sample move onto the next stage
+        if (fifo.dout[fifo.dout.WIDTH-1] && mag_phase.m_axis_dout_tvalid) {
+          addr.d = CROP_MIN;
+          state.d = state.AGGRIGATE_WAIT;
+        }
+      
+      state.AGGRIGATE_WAIT:
+        // we need to wait a cycle for the RAM's output to catch up
+        addr.d = addr.q + 1;
+        state.d = state.AGGRIGATE;
+        sums.d = 16x{{24b0}}; // zero out sums
+      
+      state.AGGRIGATE:
+        addr.d = addr.q + 1;
+        angle = ram.read_data[0][1][15:8]; // angle calculated in the last step
+        magnitude = ram.read_data[6][0];   // use the magnitude from the center mic
+        
+        /*
+           We now need to go through each frequency and bin them into one of 16 groups.
+           This makes it easier to get an idea of where the sound is coming from as 
+           many frequencies will point in the same direction of a single source. If 
+           we have multiple sources then multiple bins will receive a lot of values. 
+           A more advanced grouping method could be done in software off chip such as 
+           K-means to get a more accurate picture, but this method works relatively well 
+           and is simple to implement in hardware.
+        */
+        if (angle >= $signed(ANGLE_BOUNDS[7]) || angle < $signed(-ANGLE_BOUNDS[7])) {
+          sums.d[0] = sums.q[0] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[6]) && angle < $signed(ANGLE_BOUNDS[7])) {
+          sums.d[1] = sums.q[1] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[5]) && angle < $signed(ANGLE_BOUNDS[6])) {
+          sums.d[2] = sums.q[2] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[4]) && angle < $signed(ANGLE_BOUNDS[5])) {
+          sums.d[3] = sums.q[3] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[3]) && angle < $signed(ANGLE_BOUNDS[4])) {
+          sums.d[4] = sums.q[4] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[2]) && angle < $signed(ANGLE_BOUNDS[3])) {
+          sums.d[5] = sums.q[5] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[1]) && angle < $signed(ANGLE_BOUNDS[2])) {
+          sums.d[6] = sums.q[6] + magnitude;
+        } else if (angle >= $signed(ANGLE_BOUNDS[0]) && angle < $signed(ANGLE_BOUNDS[1])) {
+          sums.d[7] = sums.q[7] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[0]) && angle < $signed(ANGLE_BOUNDS[0])) {
+          sums.d[8] = sums.q[8] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[1]) && angle < $signed(-ANGLE_BOUNDS[0])) {
+          sums.d[9] = sums.q[9] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[2]) && angle < $signed(-ANGLE_BOUNDS[1])) {
+          sums.d[10] = sums.q[10] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[3]) && angle < $signed(-ANGLE_BOUNDS[2])) {
+          sums.d[11] = sums.q[11] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[4]) && angle < $signed(-ANGLE_BOUNDS[3])) {
+          sums.d[12] = sums.q[12] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[5]) && angle < $signed(-ANGLE_BOUNDS[4])) {
+          sums.d[13] = sums.q[13] + magnitude;
+        } else if (angle >= $signed(-ANGLE_BOUNDS[6]) && angle < $signed(-ANGLE_BOUNDS[5])) {
+          sums.d[14] = sums.q[14] + magnitude;
+        } else {
+          sums.d[15] = sums.q[15] + magnitude;
+        }
+        
+        // stop once we reach the highest frequency to count (we only care about audible ones)
+        if (addr.q == CROP_MAX)
+          state.d = state.OUTPUT;
+      
+      state.OUTPUT:
+        for (i = 0; i < 16; i++) {
+          sum = sums.q[i][sums.q.WIDTH[1]-1:0];
+          if (sum > 65535) // if it overflowed, saturate it
+            sum = 65535;
+          
+          result[i] = sum[15:0]; // use the 16 LSBs for decent sensitivity
+        }
+        result_valid = 1;
+        
+        state.d = state.IDLE;
+      default:
+        state.d = state.IDLE;
+    }
+  }
+}

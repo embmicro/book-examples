@@ -1,0 +1,104 @@
+module mojo_top (
+    input clk,              // 50MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input cclk,             // configuration clock, AVR ready when high
+    output spi_miso,        // AVR SPI MISO
+    input spi_ss,           // AVR SPI Slave Select
+    input spi_mosi,         // AVR SPI MOSI
+    input spi_sck,          // AVR SPI Clock
+    output spi_channel [4], // AVR general purpose pins (used by default to select ADC channel)
+    input avr_tx,           // AVR TX (FPGA RX)
+    output avr_rx,          // AVR RX (FPGA TX)
+    input avr_rx_busy,      // AVR RX buffer full
+    output mic_clk,         // clock for the PDM microphones
+    input mic_data[7]       // data from the PDM microphones
+  ) {
+  
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    
+    .rst(0){
+      // the avr_interface module is used to talk to the AVR for access to the USB port and analog pins
+      //avr_interface avr;
+      //reg_interface reg;
+    }
+    
+    .rst(rst){
+      pdm_mics pdm_mics;     // PDM mic filter
+      
+      sound_locator locator; // sound direction locator
+      
+      led_ring led_ring;     // LED ring controller
+    }
+  }
+  
+  var i;
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    
+    // Commented out to save space as it is unused except for debugging
+    /*
+    // connect inputs of avr
+    avr.cclk = cclk;
+    avr.spi_ss = spi_ss;
+    avr.spi_mosi = spi_mosi;
+    avr.spi_sck = spi_sck;
+    avr.rx = avr_tx;
+    avr.channel = hf;           // ADC is unused so disable
+    avr.tx_block = avr_rx_busy; // block TX when AVR is busy
+    
+    // connect outputs of avr
+    spi_miso = avr.spi_miso;
+    spi_channel = avr.spi_channel;
+    avr_rx = avr.tx;
+    
+    reg.tx_busy = avr.tx_busy;
+    avr.tx_data = reg.tx_data;
+    avr.new_tx_data = reg.new_tx_data;
+    reg.rx_data = avr.rx_data;
+    reg.new_rx_data = avr.new_rx_data;
+    
+    reg.regIn.data = 32bx;
+    reg.regIn.drdy = 0;
+    */
+    
+    // comment out if using reg_interface for debugging
+    spi_miso = bx;
+    spi_channel = bx;
+    avr_rx = bx;
+    
+    // connect up the microphones
+    pdm_mics.mic_data = mic_data;
+    mic_clk = pdm_mics.mic_clk;
+    
+    // feed in mic data to loaction detector
+    locator.new_sample_in = pdm_mics.new_sample;
+    locator.sample_in = pdm_mics.sample;
+    
+    // continuously run the locator
+    locator.start = 1;
+    
+    // connect up the LEDs
+    led = led_ring.leds;
+    
+    // default value
+    led_ring.value = 16x{{8bx}};
+    
+    // locator values are 16 bits but the LED controller uses 8 bits
+    // we use bits 11-4 to provide reasonable sensitivity
+    for (i = 0; i < 16; i++)
+      // saturate if values go above the bits we are using
+      led_ring.value[i] = |locator.result[i][15:12] ? 255 : locator.result[i][11-:8];
+    
+    // update the ring values when we have them
+    led_ring.new_value = locator.result_valid;
+  }
+}

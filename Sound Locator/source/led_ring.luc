@@ -1,0 +1,63 @@
+/*
+   This module controls the LED ring 
+   on the Microphone Shield. It can 
+   display 8 bit values of brightness 
+   for all 16 LEDs independently.
+*/
+
+module led_ring (
+    input clk,           // clock
+    input rst,           // reset
+    output leds [8],     // LED output
+    input value [16][8], // values to display
+    input new_value      // flag to update values
+  ) {
+  
+  sig group[4]; // LED common groups (for multiplexing)
+  sig led[4];   // LEDs
+  
+  .clk(clk) {
+    .rst(rst) {
+      dff values[16][8];     // current values to display
+      dff next_value[16][8]; // new pending values
+      dff pending;           // flag for new values
+      counter ctr (#DIV(9), #SIZE(2+8)); // PWM counter
+    }
+    
+  }
+  
+  // group decoder
+  decoder group_dec (#WIDTH(2));
+ 
+  sig grp_num[2];    // active group
+  sig comp_value[8]; // pwm counter value
+  
+  var i;
+  
+  always {
+    // if the counter reset and we have new values
+    if (ctr.value == 0 && pending.q) {
+      pending.d = 0;              // reset the flag
+      values.d = next_value.q;    // copy the new values
+    }
+    
+    if (new_value) {              // if new value to display
+      next_value.d = value;       // save it
+      pending.d = 1;              // flag we need to update
+    }
+    
+    grp_num = ctr.value[9:8];     // group number
+    comp_value = ctr.value[7:0];  // pwm compare value
+    
+    // for each LED
+    for (i = 0 ; i < 4; i++)
+      // turn on if value is greater than compare value (LEDs are active low)
+      led[i] = values.q[grp_num * 4 + i] <= comp_value;
+    
+    group_dec.in = grp_num;       // decode the group number
+    group = ~group_dec.out;       // use decoder output to select the group (also active low)
+    
+    // output the group and LED selection
+    leds = c{group[2], group[1], group[3], group[0], led[2], led[3], led[0], led[1]};
+  }
+}

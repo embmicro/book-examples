@@ -1,0 +1,22 @@
+# Date: Thu Sep 29 18:37:40 2016
+
+SET addpads = false
+SET asysymbol = true
+SET busformat = BusFormatAngleBracketNotRipped
+SET createndf = false
+SET designentry = Verilog
+SET device = xc6slx9
+SET devicefamily = spartan6
+SET flowvendor = Other
+SET formalverification = false
+SET foundationsym = false
+SET implementationfiletype = Ngc
+SET package = tqg144
+SET removerpms = false
+SET simulationfiles = Behavioral
+SET speedgrade = -2
+SET verilogsim = true
+SET vhdlsim = false
+SET workingdirectory = "/home/justin/workspace/git/mojo-ide/Mojo IDE/"
+
+# CRC: 86de9e5e

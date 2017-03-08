@@ -1,0 +1,69 @@
+/*
+   This module connects to the 7 PDM mics on the
+   microphone shield and outputs 16 bit values
+   for them all. This is done by passing the PDM 
+   signals through decimation filters.
+   
+   This module will output a 2.5MHz clock for the
+   microphones and generate samples at 50KHz with 
+   a 50MHz system clock.
+*/
+module pdm_mics (
+    input clk,             // clock
+    input rst,             // reset
+    output mic_clk,        // clock for all the microphones
+    input mic_data [7],    // data from each microphone
+    output sample [7][16], // sample from all 7 microphones
+    output new_sample      // new sample flag
+  ) {
+  
+  .clk(clk) {
+    .rst(rst) {
+      counter clk_ctr (#SIZE(4), #TOP(9));       // clock divider counter
+      dff mic_clk_reg;                           // mic_clk dff
+    }
+    edge_detector clk_edge (#RISE(0), #FALL(1)); // clock counter reset detector
+    edge_detector new_data (#RISE(1), #FALL(0)); // clock rising edge detector
+  }
+  
+  // decimates by a factor of 50
+  decimation_filter dfilter [7] (.aclk(clk));
+  
+  const SAMPLE_MSB = 19;
+  const SAMPLE_LSB = 0;
+  
+  // used to store unused MSBs
+  sig left_over [SAMPLE_MSB - SAMPLE_LSB + 1 - 16];
+  
+  var i;
+  
+  always {
+    // generate a clock at 1/20 the system clock (2.5 MHz)
+    clk_edge.in = clk_ctr.value[3];   // this bit will fall when clk_ctr resets
+    if (clk_edge.out)                 // if fall was detected
+      mic_clk_reg.d = ~mic_clk_reg.q; // toggle the mic clock
+    
+    new_data.in = mic_clk_reg.q;      // detect rising edges = new data
+    
+    mic_clk = mic_clk_reg.q;          // output mic clock
+    
+    // data valid at rising edge of mic clock
+    dfilter.s_axis_data_tvalid = 7x{new_data.out};
+    
+    // all decimators are identical so we can use any tvalid flag for new_sample
+    new_sample = dfilter.m_axis_data_tvalid[0]; 
+    
+    // for each mic
+    for (i = 0; i < 7; i++) {
+      dfilter.s_axis_data_tdata[i] = mic_data[i] ? 8d1 : -8d1; // convert 0 or 1 into -1 or 1
+      sample[i] = dfilter.m_axis_data_tdata[i][SAMPLE_LSB+:16];
+      left_over = dfilter.m_axis_data_tdata[i][SAMPLE_MSB:SAMPLE_LSB+16];
+      
+      // check for overflow and saturate
+      if (!left_over[left_over.WIDTH-1] && (|left_over))
+        sample[i] = 16h7fff;
+      else if (left_over[left_over.WIDTH-1] && !(&left_over))
+        sample[i] = 16h8000;
+    }
+  }
+}

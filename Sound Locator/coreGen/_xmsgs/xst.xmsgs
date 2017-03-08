@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- IMPORTANT: This is an internal file that has been generated
+     by the Xilinx ISE software.  Any direct editing or
+     changes made to this file may result in unpredictable
+     behavior or data corruption.  It is strongly advised that
+     users do not edit the contents of this file. -->
+<messages>
+<msg type="warning" file="HDLCompiler" num="1127" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/cic_compiler_v3_0_xst.vhd" Line 352: Assignment to <arg fmt="%s" index="1">sample_consumed</arg> ignored, since the identifier is never used
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="746" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/decimate.vhd" Line 237: Range is empty (null range)
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="746" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/delay_bit.vhd" Line 92: Range is empty (null range)
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="746" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/int_comb_stage_folded.vhd" Line 484: Range is empty (null range)
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="220" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/int_comb_stage_folded.vhd" Line 484: Assignment ignored
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="1127" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/emb_calc.vhd" Line 1239: Assignment to <arg fmt="%s" index="1">d_in</arg> ignored, since the identifier is never used
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="746" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/emb_calc.vhd" Line 1011: Range is empty (null range)
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="634" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/int_comb_stage_folded.vhd" Line 442: Net &lt;<arg fmt="%s" index="1">gen_split_accum[0].gen_sum_struct.sum_in_casc[13]</arg>&gt; does not have a driver.
+</msg>
+
+<msg type="warning" file="HDLCompiler" num="634" delta="new" >"/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/cic_compiler_v3_0/int_comb_stage_folded.vhd" Line 463: Net &lt;<arg fmt="%s" index="1">gen_split_accum[0].gen_sum_struct.cin_sel[2]</arg>&gt; does not have a driver.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">m_axis_data_tuser</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">s_axis_config_tready</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">m_axis_data_tlast</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">event_tlast_unexpected</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">event_tlast_missing</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="info" file="Xst" num="3210" delta="new" >&quot;<arg fmt="%s" index="1">/home/justin/workspace/git/mojo-ide/Mojo IDE/_cg/_dbg/decimation_filter.vhd</arg>&quot; line <arg fmt="%s" index="2">131</arg>: Output port &lt;<arg fmt="%s" index="3">event_halted</arg>&gt; of the instance &lt;<arg fmt="%s" index="4">U0</arg>&gt; is unconnected or connected to loadless signal.
+</msg>
+
+<msg type="warning" file="Xst" num="1989" delta="new" >Unit &lt;<arg fmt="%s" index="1">int_comb_stage_folded_2</arg>&gt;: instances &lt;<arg fmt="%s" index="2">gen_split_accum[0].gen_comb_mem_src.gen_en_dly</arg>&gt;, &lt;<arg fmt="%s" index="3">gen_split_accum[0].gen_mem_we</arg>&gt; of unit &lt;<arg fmt="%s" index="4">delay_bit_2</arg>&gt; are equivalent, second instance is removed
+</msg>
+
+<msg type="info" file="Xst" num="2169" delta="new" >HDL ADVISOR - Some clock signals were not automatically buffered by XST with BUFG/BUFR resources. Please use the buffer_type constraint in order to insert these buffers to the clock signals to help prevent skew problems.
+</msg>
+
+</messages>
+

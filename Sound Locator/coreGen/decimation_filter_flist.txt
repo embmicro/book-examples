@@ -1,0 +1,14 @@
+# Output products list for <decimation_filter>
+decimation_filter/doc/cic_compiler_v3_0_readme.txt
+decimation_filter/doc/cic_compiler_v3_0_vinfo.html
+decimation_filter/doc/ds845_cic_compiler.pdf
+decimation_filter.asy
+decimation_filter.gise
+decimation_filter.ngc
+decimation_filter.v
+decimation_filter.veo
+decimation_filter.xco
+decimation_filter.xise
+decimation_filter_flist.txt
+decimation_filter_xmdf.tcl
+demo_tb/tb_decimation_filter.vhd
