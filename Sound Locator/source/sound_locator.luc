@@ -39,9 +39,10 @@ module sound_locator (
   .clk(clk) {
     .rst(rst) {
       // FSM state holder
-      fsm state = { INIT, IDLE, CAPTURE, SAMPLE_READ, FFT_FEED, FFT_UNLOAD, DIFFERENCE, AGGRIGATE_WAIT, AGGRIGATE, OUTPUT };
+      fsm state = { INIT, IDLE, CAPTURE, FFT, DIFFERENCE, AGGRIGATE_WAIT, AGGRIGATE, OUTPUT };
       dff addr [$clog2(SAMPLES)];       // address for the RAM
-      dff ch_ctr [3];                   // channel counter (0-6)
+      dff load_ch_ctr [3];              // channel counter (0-6)
+      dff unload_ch_ctr [3];            // channel counter (0-6)
     }
     
     hann_rom hann;                      // Hann function ROM
@@ -49,6 +50,9 @@ module sound_locator (
     signed dff scaled_phase[6][2][17];  // scaled phase vector values
     dff addr_pipe [2][addr.WIDTH];      // pipe to keep the addr in sync
     dff mag_phase_ready[2];             // previous ready flags
+    dff last_value [16];
+    dff xfft_ready;
+    dff wait_ram;
   }
   
   // FIFO for holding addr values while CORDIC processes data
@@ -63,6 +67,7 @@ module sound_locator (
   simple_dual_ram ram [7][2] (#SIZE(16), #DEPTH(SAMPLES/2), .wclk(clk), .rclk(clk));
   
   var i;
+  sig sample[16];                  // RAM sample
   signed sig mult_temp[34];        // temp multiplication value
   signed sig hann_sample[16];      // sample passed through Hann window
   signed sig temp_phase[6][17];    // temp phase value when calculating differences
@@ -99,6 +104,7 @@ module sound_locator (
     
     // save the last two ready states
     mag_phase_ready.d = c{mag_phase_ready.q[0], mag_phase.s_axis_cartesian_tready};
+    xfft_ready.d = xfft.s_axis_data_tready;
     
     fifo.din = bx;
     fifo.wput = 0;
@@ -115,7 +121,7 @@ module sound_locator (
       
       state.IDLE:
         addr.d = 0;
-        ch_ctr.d = 0;
+        
         if (start)
           state.d = state.CAPTURE;
       
@@ -134,42 +140,59 @@ module sound_locator (
           addr.d = addr.q + 1;
           if (addr.q == SAMPLES - 1) { // if all samples captured move on to next stage
             addr.d = 0;
-            state.d = state.SAMPLE_READ;
+            load_ch_ctr.d = 0;
+            unload_ch_ctr.d = 0;
+            wait_ram.d = 1;
+            state.d = state.FFT;
           }
         }
-      state.SAMPLE_READ:
-        // wait a cycle to read the data from RAM
-        state.d = state.FFT_FEED;
-        ram.raddr = 7x{{2x{{addr.q[addr.WIDTH-1:1]}}}};
       
-      state.FFT_FEED:
+      state.FFT:
         // read from addr.q minus LSB
         ram.raddr = 7x{{2x{{addr.q[addr.WIDTH-1:1]}}}};
         
-        // if the FFT is ready to accept data
-        if (xfft.s_axis_data_tready) {
-          // multiply each sample by the HANN window
-          mult_temp = $signed(ram.read_data[ch_ctr.q][addr.q[0]]) * $signed(c{1b0,hann.value});
-          hann_sample = mult_temp[15+:16];
-          xfft.s_axis_data_tdata = c{16b0, hann_sample}; // imaginary part of FFT is 0
-          xfft.s_axis_data_tvalid = 1;
-          addr.d = addr.q + 1;
-          state.d = state.SAMPLE_READ;
-          
-          if (addr.q == SAMPLES - 1) { // if we've read all the samples
-            xfft.s_axis_data_tlast = 1;
-            addr.d = 0;
-            state.d = state.FFT_UNLOAD; // move to next stage
+        // only load the seven channels
+        if (load_ch_ctr.q < 7) {
+          // if we have to wait for the RAM to catch up
+          if (wait_ram.q) {
+            wait_ram.d = 0;      // reset flag
+            addr.d = addr.q + 1; // increment address
+          } else {
+            // if the fft was ready but now isn't we need to save the 
+            // output from the RAM for when the FFT is ready
+            if (xfft_ready.q && !xfft.s_axis_data_tready)
+              last_value.d = ram.read_data[load_ch_ctr.q][addr.q[0]];
+            
+            // if the FFT is ready to accept data
+            if (xfft.s_axis_data_tready) {
+              // if the FFT was ready last cycle use the RAM output directly, otherwise use the saved value
+              sample = xfft_ready.q ? ram.read_data[load_ch_ctr.q][addr.q[0]] : last_value.q;
+              // multiply each sample by the HANN window
+              mult_temp = $signed(sample) * $signed(c{1b0,hann.value});
+              hann_sample = mult_temp[15+:16];
+              xfft.s_axis_data_tdata = c{16b0, hann_sample}; // imaginary part of FFT is 0
+              xfft.s_axis_data_tvalid = 1;
+              addr.d = addr.q + 1;
+              
+              // addr.q will be 0 if the fft was stalled when waiting for the last sample
+              if ((addr.q == SAMPLES - 1 && !xfft_ready.q) || addr.q == 0) { // if we've read all the samples
+                xfft.s_axis_data_tlast = 1;
+                addr.d = 0;
+                wait_ram.d = 1; // wait for RAM to read addr 0
+                load_ch_ctr.d = load_ch_ctr.q + 1;
+              }
+            }
           }
         }
-      state.FFT_UNLOAD:
+        
+        
         /*
-           In this step we unload the FFT and pass the data through the mag_phase calculator 
-           to convert the Cartesian FFT data into polar coordinates. We will use the 
+           In this step we unload the FFT and pass the data through the mag_phase calculator
+           to convert the Cartesian FFT data into polar coordinates. We will use the
            phase of each frequency to determine the delay and the magnitude to determine
            how much weight we should give that frequency.
            
-           Since the FFT input only had real values, the output will be symmetrical. This 
+           Since the FFT input only had real values, the output will be symmetrical. This
            means we only need to process the first half of data.
         */
         xfft.m_axis_data_tready = mag_phase.s_axis_cartesian_tready;
@@ -183,17 +206,15 @@ module sound_locator (
         // read the fifo data whenever the mag_phase output is valid
         fifo.rget = mag_phase.m_axis_dout_tvalid;
         ram.waddr = 7x{{2x{{fifo.dout[addr.WIDTH-2:0]}}}}; // recover the address from the fifo
-        ram.write_en[ch_ctr.q] = 2x{mag_phase.m_axis_dout_tvalid & ~fifo.dout[addr.WIDTH-1]}; // write only first half of values
-        ram.write_data[ch_ctr.q] = {mag_phase.m_axis_dout_tdata[31:16], mag_phase.m_axis_dout_tdata[15:0]}; // phase, mag
+        ram.write_en[unload_ch_ctr.q] = 2x{mag_phase.m_axis_dout_tvalid & ~fifo.dout[addr.WIDTH-1]}; // write only first half of values
+        ram.write_data[unload_ch_ctr.q] = {mag_phase.m_axis_dout_tdata[31:16], mag_phase.m_axis_dout_tdata[15:0]}; // phase, mag
         
         // if we have processed all the samples we need to
         if (mag_phase.m_axis_dout_tvalid && fifo.dout[fifo.dout.WIDTH-1]) {
-          ch_ctr.d = ch_ctr.q + 1;                 // move onto the next channel
-          state.d = state.SAMPLE_READ;
-          if (ch_ctr.q == 6) {                     // if we have processed all 7 channels
+          unload_ch_ctr.d = unload_ch_ctr.q + 1;   // move onto the next channel
+          if (unload_ch_ctr.q == 6) {              // if we have processed all 7 channels
             state.d = state.DIFFERENCE;            // move to the next stage
             addr_pipe.d = 2x{{addr.WIDTHx{1b0}}};
-            addr.d = 0;
           }
         }
       
@@ -225,8 +246,8 @@ module sound_locator (
         addr_pipe.d[0] = addr.q; // output address of the ram
         
         if (mag_phase.s_axis_cartesian_tready) {
-          /* 
-             Here we are scaling each microphone's location vector by 
+          /*
+             Here we are scaling each microphone's location vector by
              the delay (phase difference). This will give us a vector
              proportional to that microphone's contribution to the total
              direction.
@@ -319,11 +340,11 @@ module sound_locator (
         
         /*
            We now need to go through each frequency and bin them into one of 16 groups.
-           This makes it easier to get an idea of where the sound is coming from as 
-           many frequencies will point in the same direction of a single source. If 
-           we have multiple sources then multiple bins will receive a lot of values. 
-           A more advanced grouping method could be done in software off chip such as 
-           K-means to get a more accurate picture, but this method works relatively well 
+           This makes it easier to get an idea of where the sound is coming from as
+           many frequencies will point in the same direction of a single source. If
+           we have multiple sources then multiple bins will receive a lot of values.
+           A more advanced grouping method could be done in software off chip such as
+           K-means to get a more accurate picture, but this method works relatively well
            and is simple to implement in hardware.
         */
         if (angle >= $signed(ANGLE_BOUNDS[7]) || angle < $signed(-ANGLE_BOUNDS[7])) {
