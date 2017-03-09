@@ -410,8 +410,8 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.xco</xilinx:name>
                      <xilinx:userFileType>xco</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:24 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x6DE25FAD</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x6CFE86D1</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -421,7 +421,7 @@
                      <xilinx:name>./xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_lin.zip</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>zip</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:24 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x921095B3</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -429,7 +429,7 @@
                      <xilinx:name>./xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_lin64.zip</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>zip</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:24 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xDCD30442</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -437,7 +437,7 @@
                      <xilinx:name>./xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_nt.zip</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>zip</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:24 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x4B327D5F</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -445,7 +445,7 @@
                      <xilinx:name>./xfft_v8_0/cmodel/xfft_v8_0_bitacc_cmodel_nt64.zip</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>zip</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:24 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xC21BC690</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -459,7 +459,7 @@
                      <xilinx:name>./demo_tb/tb_xfft_v8_0.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:37:25 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:49:20 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x5D7D02FA</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -469,8 +469,8 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.ngc</xilinx:name>
                      <xilinx:userFileType>ngc</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:02 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x58DAC680</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:53 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x73CDAA35</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -479,8 +479,8 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.ngc</xilinx:name>
                      <xilinx:userFileType>ngc</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:03 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x50563EE1</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:54 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xB653B0BE</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -492,8 +492,8 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.veo</xilinx:name>
                      <xilinx:userFileType>veo</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:03 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x4AA2D9AC</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:54 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xC637FA54</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -502,8 +502,8 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.v</xilinx:name>
                      <xilinx:userFileType>verilog</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:04 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x2C2B3847</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:55 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x02D49216</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -516,7 +516,7 @@
                      <xilinx:name>./xfft_v8_0/doc/ds808_xfft.pdf</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>pdf</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:04 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:55 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x38A749C9</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -524,7 +524,7 @@
                      <xilinx:name>./xfft_v8_0/doc/xfft_v8_0_readme.txt</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>txt</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:04 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:55 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x34F6632E</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -532,7 +532,7 @@
                      <xilinx:name>./xfft_v8_0/doc/xfft_v8_0_vinfo.html</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:04 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:55 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x05ECD91B</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -545,7 +545,7 @@
                   <xilinx:file>
                      <xilinx:name>./xfft_v8_0.asy</xilinx:name>
                      <xilinx:userFileType>asy</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:06 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:57 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xC2D48214</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -556,7 +556,7 @@
                      <xilinx:name>./xfft_v8_0_xmdf.tcl</xilinx:name>
                      <xilinx:userFileType>tclXmdf</xilinx:userFileType>
                      <xilinx:userFileType>tcl</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:06 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:57 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xE9998100</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -567,7 +567,7 @@
                      <xilinx:name>./xfft_v8_0.gise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>gise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:08 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:59 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x9AFF0918</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -575,8 +575,8 @@
                      <xilinx:name>./xfft_v8_0.xise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:08 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x211C395E</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:50:59 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xD569010E</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -586,7 +586,7 @@
                      <xilinx:name>./xfft_v8_0.gise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>gise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:09 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:51:01 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x7B05573E</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -594,8 +594,8 @@
                      <xilinx:name>./xfft_v8_0.xise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:09 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x3AC2D2AB</xilinx:checkSum>
+                     <xilinx:timeStamp>Wed Mar 08 23:51:01 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xB86E292D</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -609,7 +609,7 @@
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>txtFlist</xilinx:userFileType>
                      <xilinx:userFileType>txt</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 20:39:10 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Wed Mar 08 23:51:01 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x85F90F31</xilinx:checkSum>
                      <xilinx:generationId>generationID_2090479949</xilinx:generationId>
                   </xilinx:file>
@@ -636,17 +636,17 @@
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.ITERATIONS">0</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.PRECISION">0</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.COARSE_ROTATION">true</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.COMPENSATION_SCALING">BRAM</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_HAS_TUSER">false</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_TUSER_WIDTH">1</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_HAS_TLAST">false</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.COMPENSATION_SCALING">Embedded_Multiplier</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_HAS_TUSER">true</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_TUSER_WIDTH">9</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CARTESIAN_HAS_TLAST">true</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.PHASE_HAS_TUSER">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.PHASE_TUSER_WIDTH">1</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.PHASE_HAS_TLAST">false</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.FLOW_CONTROL">Blocking</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.OPTIMIZE_GOAL">Resources</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.FLOW_CONTROL">NonBlocking</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.OPTIMIZE_GOAL">Performance</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.OUT_TREADY">false</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.OUT_TLAST_BEHV">Null</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.OUT_TLAST_BEHV">Pass_Cartesian_TLAST</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.ACLKEN">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.ARESETN">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_ARCHITECTURE">1</spirit:configurableElementValue>
@@ -666,19 +666,19 @@
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_PIPELINE_MODE">-1</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_PRECISION">0</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_ROUND_MODE">0</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_SCALE_COMP">2</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_THROTTLE_SCHEME">4</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_TLAST_RESOLUTION">0</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_SCALE_COMP">3</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_THROTTLE_SCHEME">3</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_TLAST_RESOLUTION">1</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_PHASE_TUSER">0</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_PHASE_TLAST">0</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_S_AXIS_PHASE_TDATA_WIDTH">16</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_S_AXIS_PHASE_TUSER_WIDTH">1</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_CARTESIAN_TUSER">0</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_CARTESIAN_TLAST">0</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_CARTESIAN_TUSER">1</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_S_AXIS_CARTESIAN_TLAST">1</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_S_AXIS_CARTESIAN_TDATA_WIDTH">32</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_S_AXIS_CARTESIAN_TUSER_WIDTH">1</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_S_AXIS_CARTESIAN_TUSER_WIDTH">9</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_M_AXIS_DOUT_TDATA_WIDTH">32</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_M_AXIS_DOUT_TUSER_WIDTH">1</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_M_AXIS_DOUT_TUSER_WIDTH">9</spirit:configurableElementValue>
          </spirit:configurableElementValues>
          <spirit:vendorExtensions>
             <xilinx:instanceProperties xmlns:xilinx="http://www.xilinx.com">
@@ -729,9 +729,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.xco</xilinx:name>
                      <xilinx:userFileType>xco</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:56:41 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x312A215D</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:14 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x5F99181A</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -743,9 +743,9 @@
                      <xilinx:name>./demo_tb/tb_mag_phase_calculator.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:56:41 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x03CBA635</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:14 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xAA37A814</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -753,9 +753,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.ngc</xilinx:name>
                      <xilinx:userFileType>ngc</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:17 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x118F7074</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:51 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xB4BADF2A</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -763,9 +763,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.ngc</xilinx:name>
                      <xilinx:userFileType>ngc</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:18 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x20149F27</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:52 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x69482685</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -776,9 +776,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.veo</xilinx:name>
                      <xilinx:userFileType>veo</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:18 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0xC407976B</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:52 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x6B06E436</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -786,9 +786,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.v</xilinx:name>
                      <xilinx:userFileType>verilog</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x7443E434</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xA559E9F2</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -800,25 +800,25 @@
                      <xilinx:name>./mag_phase_calculator/doc/cordic_v5_0_readme.txt</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>txt</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x9B82A16F</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator/doc/cordic_v5_0_vinfo.html</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x3B7D6EFC</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator/doc/ds858_cordic.pdf</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>pdf</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xABB2A387</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -826,9 +826,9 @@
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.asy</xilinx:name>
                      <xilinx:userFileType>asy</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x103BBB25</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0x69D1B03C</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -837,9 +837,9 @@
                      <xilinx:name>./mag_phase_calculator_xmdf.tcl</xilinx:name>
                      <xilinx:userFileType>tclXmdf</xilinx:userFileType>
                      <xilinx:userFileType>tcl</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:19 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:53 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x091097E3</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -848,17 +848,17 @@
                      <xilinx:name>./mag_phase_calculator.gise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>gise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:21 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:55 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0x59F66A65</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./mag_phase_calculator.xise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xise</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:21 GMT 2016</xilinx:timeStamp>
-                     <xilinx:checkSum>0x6D2E0BB8</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:55 GMT 2017</xilinx:timeStamp>
+                     <xilinx:checkSum>0xD46CE91F</xilinx:checkSum>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>
@@ -871,9 +871,9 @@
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>txtFlist</xilinx:userFileType>
                      <xilinx:userFileType>txt</xilinx:userFileType>
-                     <xilinx:timeStamp>Fri Oct 14 21:57:21 GMT 2016</xilinx:timeStamp>
+                     <xilinx:timeStamp>Thu Mar 09 18:21:55 GMT 2017</xilinx:timeStamp>
                      <xilinx:checkSum>0xE4F6D317</xilinx:checkSum>
-                     <xilinx:generationId>generationID_871148239</xilinx:generationId>
+                     <xilinx:generationId>generationID_1767355954</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
                <xilinx:fileSet>

@@ -22,7 +22,7 @@
 *     devices, or systems.  Use in such applications are expressly             *
 *     prohibited.                                                              *
 *                                                                              *
-*     (c) Copyright 1995-2016 Xilinx, Inc.                                     *
+*     (c) Copyright 1995-2017 Xilinx, Inc.                                     *
 *     All rights reserved.                                                     *
 *******************************************************************************/
 
@@ -57,8 +57,12 @@ mag_phase_calculator your_instance_name (
   .aclk(aclk), // input aclk
   .s_axis_cartesian_tvalid(s_axis_cartesian_tvalid), // input s_axis_cartesian_tvalid
   .s_axis_cartesian_tready(s_axis_cartesian_tready), // output s_axis_cartesian_tready
+  .s_axis_cartesian_tuser(s_axis_cartesian_tuser), // input [8 : 0] s_axis_cartesian_tuser
+  .s_axis_cartesian_tlast(s_axis_cartesian_tlast), // input s_axis_cartesian_tlast
   .s_axis_cartesian_tdata(s_axis_cartesian_tdata), // input [31 : 0] s_axis_cartesian_tdata
   .m_axis_dout_tvalid(m_axis_dout_tvalid), // output m_axis_dout_tvalid
+  .m_axis_dout_tuser(m_axis_dout_tuser), // output [8 : 0] m_axis_dout_tuser
+  .m_axis_dout_tlast(m_axis_dout_tlast), // output m_axis_dout_tlast
   .m_axis_dout_tdata(m_axis_dout_tdata) // output [31 : 0] m_axis_dout_tdata
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------

@@ -110,6 +110,8 @@ architecture tb of tb_mag_phase_calculator is
 
   -- Slave channel CARTESIAN inputs
   signal s_axis_cartesian_tvalid    : std_logic := '0';  -- TVALID for channel S_AXIS_CARTESIAN
+  signal s_axis_cartesian_tuser     : std_logic_vector(8 downto 0) := (others => 'X');  -- TUSER for channel S_AXIS_CARTESIAN
+  signal s_axis_cartesian_tlast     : std_logic := '0';  -- TLAST for channel S_AXIS_CARTESIAN
   signal s_axis_cartesian_tdata     : std_logic_vector(31 downto 0) := (others => 'X');  -- TDATA for channel S_AXIS_CARTESIAN
 
   -- Slave channel PHASE inputs
@@ -120,11 +122,10 @@ architecture tb of tb_mag_phase_calculator is
   -- DUT output signals
   -----------------------------------------------------------------------
 
-  -- Slave channels outputs
-  signal s_axis_cartesian_tready  : std_logic := '0';  -- TREADY for channel S_AXIS_CARTESIAN
-  signal s_axis_phase_tready      : std_logic := '0';  -- TREADY for channel S_AXIS_PHASE
   -- Master channel DOUT outputs
   signal m_axis_dout_tvalid : std_logic := '0';  -- TVALID for channel M_AXIS_DOUT
+  signal m_axis_dout_tuser  : std_logic_vector(8 downto 0) := (others => '0');  -- TUSER for channel M_AXIS_DOUT
+  signal m_axis_dout_tlast  : std_logic := '0';  -- TLAST for channel M_AXIS_DOUT
   signal m_axis_dout_tdata  : std_logic_vector(31 downto 0) := (others => '0');  -- TDATA for channel M_AXIS_DOUT
 
   -----------------------------------------------------------------------
@@ -227,9 +228,12 @@ begin
     port map (
       aclk                => aclk,
       s_axis_cartesian_tvalid     => s_axis_cartesian_tvalid,
-      s_axis_cartesian_tready     => s_axis_cartesian_tready,
+      s_axis_cartesian_tuser      => s_axis_cartesian_tuser,
+      s_axis_cartesian_tlast      => s_axis_cartesian_tlast,
       s_axis_cartesian_tdata      => s_axis_cartesian_tdata,
       m_axis_dout_tvalid  => m_axis_dout_tvalid,
+      m_axis_dout_tuser   => m_axis_dout_tuser,
+      m_axis_dout_tlast   => m_axis_dout_tlast,
       m_axis_dout_tdata   => m_axis_dout_tdata
       );
 
@@ -317,34 +321,42 @@ begin
 
       -- Drive AXI slave channel CARTESIAN payload
       -- Drive 'X's on payload signals when not valid
-      -- Payload only changes when TVALID goes high or when a transaction just occurred
       if cartesian_tvalid_nxt /= '1' then
         s_axis_cartesian_tdata <= (others => 'X');
-      elsif s_axis_cartesian_tvalid /= '1' or (s_axis_cartesian_tvalid = '1' and s_axis_cartesian_tready = '1') then
+        s_axis_cartesian_tuser <= (others => 'X');
+        s_axis_cartesian_tlast <= 'X';
+      else
         -- TDATA: Real and imaginary components are each 16 bits wide and byte-aligned at their LSBs
         s_axis_cartesian_tdata(15 downto 0) <= IP_CARTESIAN_DATA(ip_cartesian_index).re;
         s_axis_cartesian_tdata(31 downto 16) <= IP_CARTESIAN_DATA(ip_cartesian_index).im;
 
+        -- TUSER: Drive the data index value
+        s_axis_cartesian_tuser <= std_logic_vector(to_unsigned(ip_cartesian_index, 9));
+        -- TLAST: Drive high for the last data value from the input data table
+        if ip_cartesian_index = IP_CARTESIAN_DEPTH - 1 then
+          s_axis_cartesian_tlast <= '1';
+        else
+          s_axis_cartesian_tlast <= '0';
+        end if;
       end if;
 
       -- Drive AXI slave channel PHASE payload
       -- Drive 'X's on payload signals when not valid
-      -- Payload only changes when TVALID goes high or when a transaction just occurred
       if phase_tvalid_nxt /= '1' then
         s_axis_phase_tdata <= (others => 'X');
-      elsif s_axis_phase_tvalid /= '1' or (s_axis_phase_tvalid = '1' and s_axis_phase_tready = '1') then
+      else
         -- TDATA: Real component is 16 bits wide and byte-aligned at its LSBs
         s_axis_phase_tdata(15 downto 0) <= IP_PHASE_DATA(ip_phase_index).re;
       end if;
 
       -- Increment input data indices
-      if cartesian_tvalid_nxt = '1' and s_axis_cartesian_tready = '1' then
+      if cartesian_tvalid_nxt = '1' then
         ip_cartesian_index := ip_cartesian_index + 1;
         if ip_cartesian_index = IP_CARTESIAN_DEPTH then
           ip_cartesian_index := 0;
         end if;
       end if;
-      if phase_tvalid_nxt = '1' and s_axis_phase_tready = '1' then
+      if phase_tvalid_nxt = '1' then
         ip_phase_index := ip_phase_index + 1;
         if ip_phase_index = IP_PHASE_DEPTH then
           ip_phase_index := 0;
@@ -375,6 +387,14 @@ begin
     if m_axis_dout_tvalid = '1' then
       if is_x(m_axis_dout_tdata) then
         report "ERROR: m_axis_dout_tdata is invalid when m_axis_dout_tvalid is high" severity error;
+        check_ok := false;
+      end if;
+      if is_x(m_axis_dout_tuser) then
+        report "ERROR: m_axis_dout_tuser is invalid when m_axis_dout_tvalid is high" severity error;
+        check_ok := false;
+      end if;
+      if is_x(m_axis_dout_tlast) then
+        report "ERROR: m_axis_dout_tlast is invalid when m_axis_dout_tvalid is high" severity error;
         check_ok := false;
       end if;
 

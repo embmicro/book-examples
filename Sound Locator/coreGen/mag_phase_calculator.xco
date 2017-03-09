@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.7
-# Date: Fri Oct 14 21:56:41 2016
+# Date: Thu Mar  9 18:21:14 2017
 #
 ##############################################################
 #
@@ -42,19 +42,19 @@ SELECT CORDIC xilinx.com:ip:cordic:5.0
 CSET aclken=false
 CSET architectural_configuration=Word_Serial
 CSET aresetn=false
-CSET cartesian_has_tlast=false
-CSET cartesian_has_tuser=false
-CSET cartesian_tuser_width=1
+CSET cartesian_has_tlast=true
+CSET cartesian_has_tuser=true
+CSET cartesian_tuser_width=9
 CSET coarse_rotation=true
-CSET compensation_scaling=BRAM
+CSET compensation_scaling=Embedded_Multiplier
 CSET component_name=mag_phase_calculator
 CSET data_format=SignedFraction
-CSET flow_control=Blocking
+CSET flow_control=NonBlocking
 CSET functional_selection=Translate
 CSET input_width=16
 CSET iterations=0
-CSET optimize_goal=Resources
-CSET out_tlast_behv=Null
+CSET optimize_goal=Performance
+CSET out_tlast_behv=Pass_Cartesian_TLAST
 CSET out_tready=false
 CSET output_width=16
 CSET phase_format=Radians
@@ -69,4 +69,4 @@ CSET round_mode=Truncate
 MISC pkg_timestamp=2013-07-22T10:47:11Z
 # END Extra information
 GENERATE
-# CRC:  cd30794
+# CRC:   54dd78
